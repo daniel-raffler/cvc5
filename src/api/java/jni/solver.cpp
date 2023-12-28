@@ -41,6 +41,7 @@ JNIEXPORT void JNICALL Java_io_github_cvc5_Solver_deletePointer(JNIEnv* env,
                                                                 jobject,
                                                                 jlong pointer)
 {
+  std::lock_guard<std::mutex> guard(globalLock);
   const std::vector<jobject>& refs = globalReferences[pointer];
   for (jobject ref : refs)
   {
@@ -2437,6 +2438,7 @@ Java_io_github_cvc5_Solver_declareOracleFun(JNIEnv* env,
                                             jobject oracle)
 {
   CVC5_JAVA_API_TRY_CATCH_BEGIN;
+  std::lock_guard<std::mutex> guard(globalLock);
   jobject oracleReference = env->NewGlobalRef(oracle);
   globalReferences[pointer].push_back(oracleReference);
   Solver* solver = reinterpret_cast<Solver*>(pointer);
@@ -2446,6 +2448,13 @@ Java_io_github_cvc5_Solver_declareOracleFun(JNIEnv* env,
   std::vector<Sort> sorts = getObjectsFromPointers<Sort>(env, sortPointers);
   std::function<Term(std::vector<Term>)> fn =
       [env, oracleReference](std::vector<Term> input) {
+        // FIXME:
+        // This is likely still broken if multiple threads are
+        // used as the captured JEnv ("env") is only valid on the
+        // current thread. However, the callback might come from
+        // any thread that encouters a term for the oracle.
+        //
+        // See https://github.com/sosy-lab/java-smt/pull/345
         Term term = applyOracle(env, oracleReference, input);
         return term;
       };

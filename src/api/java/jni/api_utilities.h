@@ -19,6 +19,7 @@
 #include <cvc5/cvc5_parser.h>
 #include <jni.h>
 
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -149,7 +150,14 @@ jobject getBooleanObject(JNIEnv* env, bool value);
  * a map from solver pointers to global references that need to be freed when
  * the java Solver.deletePointer method is called
  */
+
 inline std::map<jlong, std::vector<jobject> > globalReferences;
+
+/**
+ * a lock to protect globalReferences
+ */
+
+inline std::mutex globalLock;
 
 /**
  * @param env jni environment
