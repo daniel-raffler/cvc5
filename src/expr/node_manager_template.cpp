@@ -129,7 +129,7 @@ NodeManager::NodeManager()
 
 NodeManager* NodeManager::currentNM()
 {
-  thread_local static NodeManager nm;
+  static NodeManager nm;
   return &nm;
 }
 
