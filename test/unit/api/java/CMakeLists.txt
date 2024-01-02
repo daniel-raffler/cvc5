@@ -37,6 +37,9 @@ set(java_test_src_files
   ${CMAKE_CURRENT_SOURCE_DIR}/TermTest.java
   ${CMAKE_CURRENT_SOURCE_DIR}/ProofTest.java
   ${CMAKE_CURRENT_SOURCE_DIR}/JavaSmtBug437.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/JavaSmtParallelBug1.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/JavaSmtParallelBug2.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/JavaSmtParallelBug3.java
 )
 
 # build junit tests
@@ -59,6 +62,7 @@ macro(cvc5_add_java_api_test name)
   add_test (NAME unit/api/java/${name}
     COMMAND
       ${Java_JAVA_EXECUTABLE}
+      -ea
       -Djava.library.path=${CVC5_JNI_PATH}
       -jar ${JUnit_JAR}
       -cp ${JUnit_JAR}:${CVC5_JAR_PATH}:.
@@ -84,5 +88,8 @@ cvc5_add_java_api_test(SynthResultTest)
 cvc5_add_java_api_test(TermTest)
 cvc5_add_java_api_test(ProofTest)
 cvc5_add_java_api_test(JavaSmtBug437)
+cvc5_add_java_api_test(JavaSmtParallelBug1)
+cvc5_add_java_api_test(JavaSmtParallelBug2)
+cvc5_add_java_api_test(JavaSmtParallelBug3)
 
 cvc5_add_unit_test_white(UncoveredTest api/java)
